@@ -16,13 +16,13 @@ const STRENGTH={
    {n:"Step-ups",rx:"3 × 10 each"},{n:"Single-leg glute bridge",rx:"3 × 12 each"},{n:"Side plank",rx:"2 × 30s each",unit:"s"}]}
 };
 const PLAN=[
- {t:"Easy run",k:"Relaxed. You should be able to talk the whole time.",i:[["Easy run","30–35 min"],["Relaxed strides","6 × 100m"]]},
- {t:"Intervals",k:"Hard day. Run each 400m at your goal 1500m pace.",i:[["Warm-up jog","10 min"],["400m at goal pace, 90s jog between","6 reps"],["Cool-down jog","10 min"]]},
- {t:"Strength X",s:"A",k:"Add reps first. Add weight once every set reaches the top of the range.",i:[["Strength X (log it in Strength)","~40 min"],["Optional easy jog","20 min"]]},
- {t:"Easy run",k:"Keep it truly easy so Friday feels good.",i:[["Easy run","30–40 min"]]},
- {t:"Tempo",k:"Hard day. Comfortably hard: a few words at a time, not full sentences.",i:[["Warm-up jog","10 min"],["Tempo run","15–20 min"],["Cool-down jog","10 min"]]},
+ {t:"Easy run",k:"Relaxed aerobic base for both events. You should be able to talk the whole time.",i:[["Easy run","30–35 min"],["Relaxed strides","6 × 100m"]]},
+ {t:"Speed",k:"400m day. Full recovery between reps — this builds raw speed, not fitness, so don't run it tired.",i:[["Warm-up jog","10 min"],["Drills: A-skips, high knees, bounds","10 min"],["Flying 30m sprints, walk back to recover","6 reps"],["Standing or 3-point starts, all-out","4 × 30m"],["Cool-down jog","10 min"]]},
+ {t:"Strength X",s:"A",k:"Power first: explosive lower-body work sharpens your 400m drive phase and your 1500m closing kick. Add reps first, then weight once every set reaches the top of the range.",i:[["Strength X (log it in Strength)","~40 min"],["Optional easy jog","20 min"]]},
+ {t:"Tempo",k:"Aerobic threshold for the 1500m. Comfortably hard: a few words at a time, not full sentences.",i:[["Warm-up jog","10 min"],["Tempo run","15–20 min"],["Cool-down jog","10 min"]]},
+ {t:"Race-pace intervals",k:"Hard day, both events. The short reps train 400m speed-endurance; the longer ones train 1500m race rhythm.",i:[["Warm-up jog","10 min"],["300m at goal 400m race pace, full recovery","4 reps"],["400m at goal 1500m pace, 90s jog between","4 reps"],["Cool-down jog","10 min"]]},
  {t:"Strength Y",s:"B",k:"Quality reps. Stop each push-up set 2 reps before you can't do more.",i:[["Strength Y (log it in Strength)","~40 min"]]},
- {t:"Long run",k:"The slowest run of the week. Time on your feet is the goal.",i:[["Long easy run","45–60 min"]]}
+ {t:"Long run",k:"The slowest run of the week. Aerobic base under the speed — time on your feet is the goal.",i:[["Long easy run","45–60 min"]]}
 ];
 const SKIN={
  am:{name:"Morning",i:["Rinse or gentle cleanser","Light moisturiser","Sunscreen SPF 50+","Lip balm"]},
@@ -48,6 +48,23 @@ const FLIP=[
    "Unspotted back tuck on a soft mat, 10 clean in a row","Back tuck on soft grass with a mat nearby"]}
 ];
 const WEEKLY=["Change pillowcase","Shave or trim moustache clean","Wash gym towel and headband"];
+const FITS=[
+ {cat:"Clean casual",vibe:"Fitted, neutral, no logos — the one you wear on a normal day and never think twice about.",i:[
+   "Fitted plain tee, white/black/sage — nothing baggy that hides the shoulders","Straight-leg dark denim or tailored chino","Minimal low-top sneakers — white leather or Sambas/Gazelles","Thin silver or gold chain, one piece only"]},
+ {cat:"Elevated athletic",vibe:"Off-duty, but it shows the training's working.",i:[
+   "Fitted quarter-zip or crewneck, one solid colour","Tapered joggers or track pants, not baggy sweats","Clean running-silhouette trainers, no scuffs","Cap worn straight"]},
+ {cat:"Smart casual",vibe:"One step up for dates or going out — clean lines, nothing oversized.",i:[
+   "Structured overshirt or bomber over a plain fitted tee","Slim tailored trousers or dark jeans, proper break at the shoe","Leather Chelsea boots or clean low-top leather sneakers","Simple watch, no other jewellery"]},
+ {cat:"Track & travel",vibe:"Comfortable but still put together for the track, airport, or car ride there.",i:[
+   "Matching fitted tracksuit set, one colour","Plain tee underneath","Clean trainers, no odd socks on show","Gym duffel or crossbody, not a slouchy backpack"]}
+];
+const FITRULES=[
+ "Fit beats logo. A plain tee that actually fits your shoulders looks better than a branded one that doesn't.",
+ "Nothing baggy, nothing skin-tight — true to size is what shows the physique you're building in the gym.",
+ "Two or three colours max per outfit, and keep the shoes clean — scuffed soles undo an otherwise good fit.",
+ "Buy less, buy better: a few well-fitted basics beat a closet of loud one-offs.",
+ "Posture, a fresh haircut and the skincare routine (see Skin) do as much as the clothes — confidence is the actual outfit."
+];
 
 let tab=store.get("tab","daily");
 let runDay=(new Date().getDay()+6)%7;
@@ -70,7 +87,7 @@ function header(){
   const runDoneN=PLAN[d].i.filter((_,j)=>ticks[d+"-"+j]).length;
   const stDone=Object.values(stretchState().t).filter(Boolean).length;
   setRing((runDoneN+skinDone+stDone)/(PLAN[d].i.length+skinTotal()+stretchTotal()));
-  const titles={daily:"Daily",run:"Run",strength:"Strength",skin:"Skin & grooming",moves:"Stretch & backflip",progress:"Progress"};
+  const titles={daily:"Daily",run:"Run",strength:"Strength",skin:"Skin & grooming",moves:"Stretch & backflip",fits:"Fits",progress:"Progress"};
   $("#title").textContent=titles[tab];
   $("#subtitle").textContent=`${DAYS[d]}: ${PLAN[d].t} · skin ${skinDone}/${skinTotal()} · stretch ${stDone}/${stretchTotal()}`;
 }
@@ -86,7 +103,7 @@ function viewDaily(){
   out+=block("Training",p.t,p.k,runRows,p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Log ${p.t} sets</button></p>`:"");
   out+=block("After training","Stretch",STRETCH.post.sub,STRETCH.post.i.map(([n,rx],j)=>rowHTML("tpost"+j,n,rx,st.t["post"+j])).join(""));
   out+=block("Night","Skin","",SKIN.pm.i.map((n,j)=>rowHTML("spm"+j,n,"",sk.t["pm"+j])).join(""));
-  return out+`<p class="tip glass">Eat protein at every meal and aim for 8–9 hours of sleep tonight.</p>`;
+  return out+`<p class="tip glass">Eat in a calorie surplus with protein at every meal — gaining size on top of this much running takes deliberate fuel, not leftovers. Aim for 8–9 hours of sleep tonight.</p>`;
 }
 function viewRun(){
   const p=PLAN[runDay];
@@ -108,7 +125,7 @@ function viewStrength(){
     <form data-ex="${i}">${e.w?`<input name="w" type="number" step="0.5" min="0" max="300" placeholder="kg" aria-label="${e.n} weight in kg">`:""}
     <input name="r" type="number" min="1" max="300" placeholder="${e.unit?"seconds":"reps"}" aria-label="${e.n} ${e.unit?"seconds":"reps"}">
     <button class="btn">Log</button></form><p class="err"></p></div>`}).join("")}
-  <p class="tip">Getting bigger needs three things together: lifting that gets gradually harder, eating enough with protein at every meal, and 8–9 hours of sleep.</p></section>`;
+  <p class="tip">Getting bigger without looking soft needs three things together: lifting that gets gradually harder, eating enough (roughly 300–500 kcal above what you burn, ~1.6–2g protein per kg bodyweight, spread across the day), and 8–9 hours of sleep. On the two speed/interval days, add extra carbs so you're not fueling hard running off empty.</p></section>`;
 }
 function viewSkin(){
   const s=skinState(), w=store.get("weekly",{});
@@ -132,6 +149,11 @@ function viewMoves(){
   FLIP.map((L,li)=>{const n=L.i.filter((_,j)=>f[li+"-"+j]).length;
     return `<section class="card glass"><h3>${L.t} <span class="lvl-count">${n}/${L.i.length}</span></h3><p class="sub">${L.k}</p>
     <ul class="list">${L.i.map((x,j)=>rowHTML("f"+li+"-"+j,x,"",f[li+"-"+j])).join("")}</ul></section>`}).join("");
+}
+function viewFits(){
+  return FITS.map(f=>`<section class="card glass"><h3>${esc(f.cat)}</h3><p class="sub">${esc(f.vibe)}</p>
+  <ul class="flist">${f.i.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`).join("")+
+  `<section class="card glass"><h3>Fit rules</h3><ul class="flist">${FITRULES.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`;
 }
 function viewProgress(){
   return `<div class="two">
@@ -158,7 +180,7 @@ function render(){
   store.set("tab",tab);
   document.querySelectorAll(".dock button").forEach(x=>x.setAttribute("aria-current",x.dataset.tab===tab));
   const v=$("#view");
-  v.innerHTML=`<div class="view">${{daily:viewDaily,run:viewRun,strength:viewStrength,skin:viewSkin,moves:viewMoves,progress:viewProgress}[tab]()}</div>`;
+  v.innerHTML=`<div class="view">${{daily:viewDaily,run:viewRun,strength:viewStrength,skin:viewSkin,moves:viewMoves,fits:viewFits,progress:viewProgress}[tab]()}</div>`;
   header();
   v.querySelectorAll("[data-day]").forEach(x=>x.onclick=()=>{runDay=+x.dataset.day;render()});
   v.querySelectorAll("[data-m]").forEach(x=>x.onclick=()=>{mSel=x.dataset.m;store.set("mSel",mSel);render()});
@@ -212,13 +234,23 @@ function paintAccount(){
 }
 function authMode(up){
   signUpMode=up;
-  $("#authTitle").textContent=up?"Create an account":"Sign in";
+  $("#segIn").setAttribute("aria-selected",String(!up));
+  $("#segUp").setAttribute("aria-selected",String(up));
+  $("#authTitle").textContent=up?"Create an account":"Welcome back";
+  $("#authSub").textContent=up?"Set a password and your training starts saving to the cloud right away.":"Your training saves to the cloud, so it follows you to any device.";
   $("#authGo").textContent=up?"Create account":"Sign in";
   $("#authPass").autocomplete=up?"new-password":"current-password";
-  $("#authSwap").textContent=up?"I already have an account":"Create an account instead";
   $("#authErr").textContent="";
 }
-$("#authSwap").onclick=()=>authMode(!signUpMode);
+$("#segIn").onclick=()=>authMode(false);
+$("#segUp").onclick=()=>authMode(true);
+$("#authEye").onclick=()=>{
+  const reveal=$("#authPass").type==="password";
+  $("#authPass").type=reveal?"text":"password";
+  $("#eyeSlash").style.opacity=reveal?1:0;
+  $("#authEye").setAttribute("aria-pressed",String(reveal));
+  $("#authEye").setAttribute("aria-label",reveal?"Hide password":"Show password");
+};
 $("#authSkip").onclick=()=>{window.Store.localOnly.set(true);showAuth(false);setPill("Saving on this device only")};
 $("#acctBtn").onclick=()=>{
   if(window.Store.user()){$("#acctWho").textContent="Signed in as "+window.Store.user().email;acctSheet.hidden=false}

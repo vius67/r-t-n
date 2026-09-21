@@ -1,6 +1,6 @@
 /* Cache the app shell so it opens instantly and works with no signal.
    Bump CACHE when you change any file below. */
-const CACHE = "rtn-v1";
+const CACHE = "rtn-v2";
 const SHELL = [
   "./", "./index.html", "./styles.css", "./config.js", "./sync.js", "./app.js",
   "./manifest.webmanifest",

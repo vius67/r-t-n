@@ -38,23 +38,43 @@
 </main>
 
 <nav class="dock glass" aria-label="Sections">
-  <button data-tab="daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Daily</button>
-  <button data-tab="run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4" r="2"/><path d="M8 21l3-6 3 2v5M6 12l3-3 4 1 3 3 3 1"/></svg>Run</button>
-  <button data-tab="strength"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg>Strength</button>
-  <button data-tab="skin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>Skin</button>
-  <button data-tab="moves"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M17 2v4h4"/></svg>Moves</button>
-  <button data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l5-6 4 3 7-9"/></svg>Progress</button>
+  <button data-tab="daily" aria-label="Daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lbl">Daily</span></button>
+  <button data-tab="run" aria-label="Run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4" r="2"/><path d="M8 21l3-6 3 2v5M6 12l3-3 4 1 3 3 3 1"/></svg><span class="lbl">Run</span></button>
+  <button data-tab="strength" aria-label="Strength"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg><span class="lbl">Strength</span></button>
+  <button data-tab="skin" aria-label="Skin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg><span class="lbl">Skin</span></button>
+  <button data-tab="moves" aria-label="Moves"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M17 2v4h4"/></svg><span class="lbl">Moves</span></button>
+  <button data-tab="fits" aria-label="Fits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.5"/><path d="M12 6v2M12 8L3 15h18L12 8z"/><path d="M5 15v3h14v-3"/></svg><span class="lbl">Fits</span></button>
+  <button data-tab="progress" aria-label="Progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l5-6 4 3 7-9"/></svg><span class="lbl">Progress</span></button>
 </nav>
 
 <div class="sheet" id="authSheet" hidden>
   <form class="card glass authbox" id="authForm">
-    <h2 id="authTitle">Sign in</h2>
-    <p class="sub" id="authSub">Your training saves to the cloud, so it follows you to any device.</p>
-    <div class="field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required></div>
-    <div class="field"><label for="authPass">Password</label><input id="authPass" type="password" autocomplete="current-password" minlength="8" required></div>
+    <div class="authbrand"><span class="authbadge" aria-hidden="true">R</span>
+      <div><h2 id="authTitle">Welcome back</h2><p class="sub" id="authSub">Your training saves to the cloud, so it follows you to any device.</p></div>
+    </div>
+    <div class="segmented" role="tablist" aria-label="Sign in or create account">
+      <button type="button" class="seg" id="segIn" role="tab" aria-selected="true">Sign in</button>
+      <button type="button" class="seg" id="segUp" role="tab" aria-selected="false">Create account</button>
+    </div>
+    <div class="field">
+      <label for="authEmail">Email</label>
+      <div class="input-wrap">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+    </div>
+    <div class="field">
+      <label for="authPass">Password</label>
+      <div class="input-wrap">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <input id="authPass" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
+        <button type="button" class="eye" id="authEye" aria-label="Show password" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/><line id="eyeSlash" x1="3" y1="3" x2="21" y2="21" opacity="0"/></svg>
+        </button>
+      </div>
+    </div>
     <p class="err" id="authErr"></p>
     <button class="btn primary wide" id="authGo">Sign in</button>
-    <p class="foot"><button type="button" class="link" id="authSwap">Create an account instead</button></p>
     <p class="foot"><button type="button" class="link" id="authSkip">Use it on this device only</button></p>
   </form>
 </div>
