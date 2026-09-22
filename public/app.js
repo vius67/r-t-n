@@ -293,5 +293,14 @@ window.Store.onChange(status=>{
 render();
 window.Store.start();
 if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      reg.update();
+      document.addEventListener("visibilitychange",()=>{if(!document.hidden)reg.update()});
+    }).catch(()=>{});
+  });
+  let refreshed=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(refreshed)return; refreshed=true; window.location.reload();
+  });
 }
