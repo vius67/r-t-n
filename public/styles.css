@@ -129,25 +129,35 @@ input::placeholder{color:var(--muted)}
 .syncpill.bad{color:var(--warn)}
 .sheet[hidden]{display:none}
 .sheet{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;
-  background:rgba(4,8,20,.55);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
-.authbox{width:100%;max-width:400px;margin:0}
-.authbox h2{font-size:1.5rem;margin:0;letter-spacing:-.02em}
-.authbox .sub{margin:2px 0 0}
+  background:rgba(30,35,50,.4);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+
+/* Auth card: deliberately plain and opaque, independent of the app's glass/dark theme */
+#authSheet .authbox{width:100%;max-width:400px;margin:0;padding:28px;
+  background:#ffffff;border:1px solid #e7e9f0;border-radius:24px;
+  box-shadow:0 24px 48px -16px rgba(20,24,40,.28),0 2px 8px rgba(20,24,40,.06);
+  -webkit-backdrop-filter:none;backdrop-filter:none;color:#111528}
+#authSheet h2{font-size:1.5rem;margin:0;letter-spacing:-.02em;color:#111528}
+#authSheet .sub{margin:2px 0 0;color:#6b7086}
 .authbrand{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.authbadge{width:44px;height:44px;flex:none;border-radius:14px;background:linear-gradient(135deg,var(--bg1),var(--bg2));
-  display:grid;place-items:center;font-weight:800;font-size:1.25rem;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.25)}
-.segmented{display:flex;padding:4px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);margin-bottom:18px}
-.seg{flex:1;padding:9px 0;border-radius:999px;font-weight:600;font-size:.92rem;color:var(--muted);text-align:center;transition:background .2s,color .2s}
-.seg[aria-selected="true"]{background:var(--glass-hi);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.authbadge{width:44px;height:44px;flex:none;border-radius:14px;background:#2f6fed;
+  display:grid;place-items:center;font-weight:800;font-size:1.25rem;color:#fff}
+#authSheet .segmented{display:flex;padding:4px;border-radius:999px;background:#f2f3f7;border:1px solid #e7e9f0;margin-bottom:18px}
+#authSheet .seg{flex:1;padding:9px 0;border-radius:999px;font-weight:600;font-size:.92rem;color:#6b7086;text-align:center;transition:background .2s,color .2s}
+#authSheet .seg[aria-selected="true"]{background:#fff;color:#111528;box-shadow:0 1px 4px rgba(20,24,40,.14)}
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
-.field label{color:var(--muted);font-size:.85rem;font-weight:600;padding-left:6px}
+#authSheet .field label{color:#6b7086;font-size:.85rem;font-weight:600;padding-left:6px}
 .input-wrap{position:relative;display:flex;align-items:center}
-.input-wrap .ico{position:absolute;left:14px;width:18px;height:18px;color:var(--muted);pointer-events:none}
-.input-wrap input{padding-left:42px}
+#authSheet .input-wrap .ico{position:absolute;left:14px;width:18px;height:18px;color:#9096ac;pointer-events:none}
+#authSheet .input-wrap input{padding-left:42px;background:#f8f9fc;border:1px solid #e7e9f0;color:#111528}
+#authSheet .input-wrap input::placeholder{color:#9096ac}
+#authSheet .input-wrap input:focus{outline:2px solid #2f6fed;outline-offset:1px}
 .input-wrap input#authPass{padding-right:42px}
-.eye{position:absolute;right:8px;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;color:var(--muted)}
-.eye:hover{color:var(--ink);background:var(--glass)}
+#authSheet .eye{position:absolute;right:8px;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;color:#9096ac}
+#authSheet .eye:hover{color:#111528;background:#f2f3f7}
 .eye svg{width:19px;height:19px}
 .btn.wide{width:100%;justify-content:center;text-align:center}
-.link{background:none;border:0;color:var(--accent);font-weight:600;padding:6px;font-size:.92rem;cursor:pointer}
+#authSheet .btn.primary{background:#2f6fed;color:#fff;border-color:transparent}
+#authSheet .btn.primary:hover{background:#2559c9}
+#authSheet .link{background:none;border:0;color:#2f6fed;font-weight:600;padding:6px;font-size:.92rem;cursor:pointer}
+#authSheet .err{color:#d5473d}
 .authbox .foot{margin:6px 0 0}
