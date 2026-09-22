@@ -2,7 +2,8 @@ const $=s=>document.querySelector(s);
 const store={get:(k,f)=>window.Store.get(k,f),set:(k,v)=>window.Store.set(k,v)};
 const newId=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
+const dateKey=d=>d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+const todayKey=()=>dateKey(new Date());
 const nice=()=>new Date().toLocaleDateString("en-AU",{day:"numeric",month:"short"});
 const tickSVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#04121f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -86,7 +87,10 @@ function header(){
   const skinDone=Object.values(s.t).filter(Boolean).length;
   const runDoneN=PLAN[d].i.filter((_,j)=>ticks[d+"-"+j]).length;
   const stDone=Object.values(stretchState().t).filter(Boolean).length;
-  setRing((runDoneN+skinDone+stDone)/(PLAN[d].i.length+skinTotal()+stretchTotal()));
+  const pct=(runDoneN+skinDone+stDone)/(PLAN[d].i.length+skinTotal()+stretchTotal());
+  setRing(pct);
+  const score=Math.round(pct*100), h=store.get("history",{}), hk=todayKey();
+  if(h[hk]!==score){h[hk]=score;store.set("history",h)}
   const titles={daily:"Daily",run:"Run",strength:"Strength",skin:"Skin & grooming",moves:"Stretch & backflip",fits:"Fits",progress:"Progress"};
   $("#title").textContent=titles[tab];
   $("#subtitle").textContent=`${DAYS[d]}: ${PLAN[d].t} · skin ${skinDone}/${skinTotal()} · stretch ${stDone}/${stretchTotal()}`;
@@ -150,13 +154,46 @@ function viewMoves(){
     return `<section class="card glass"><h3>${L.t} <span class="lvl-count">${n}/${L.i.length}</span></h3><p class="sub">${L.k}</p>
     <ul class="list">${L.i.map((x,j)=>rowHTML("f"+li+"-"+j,x,"",f[li+"-"+j])).join("")}</ul></section>`}).join("");
 }
+const starSVG='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.6 6.1 20.7l1.3-6.6-4.9-4.6 6.6-.8z"/></svg>';
 function viewFits(){
-  return FITS.map(f=>`<section class="card glass"><h3>${esc(f.cat)}</h3><p class="sub">${esc(f.vibe)}</p>
-  <ul class="flist">${f.i.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`).join("")+
+  const fav=store.get("favFits",[]);
+  const order=FITS.map((f,i)=>i).sort((a,b)=>fav.includes(b)-fav.includes(a));
+  return order.map(i=>{const f=FITS[i], on=fav.includes(i);
+    return `<section class="card glass${on?" fav":""}"><div class="fit-head"><h3>${esc(f.cat)}</h3>
+    <button class="star${on?" on":""}" data-fav="${i}" aria-pressed="${on}" aria-label="Favourite ${esc(f.cat)}">${starSVG}</button></div>
+    <p class="sub">${esc(f.vibe)}</p>
+    <ul class="flist">${f.i.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`}).join("")+
   `<section class="card glass"><h3>Fit rules</h3><ul class="flist">${FITRULES.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`;
 }
+function heatmapData(){
+  const h=store.get("history",{}), weeks=18, totalDays=weeks*7;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const todayDow=(today.getDay()+6)%7;
+  const start=new Date(today); start.setDate(start.getDate()-todayDow-(weeks-1)*7);
+  let cells="";
+  for(let i=0;i<totalDays;i++){
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    if(d>today){cells+=`<div class="hcell"></div>`;continue}
+    const score=h[dateKey(d)]||0;
+    const lvl=score===0?"l0":score<34?"l1":score<67?"l2":score<100?"l3":"l4";
+    const label=`${d.toLocaleDateString("en-AU",{day:"numeric",month:"short"})}: ${score}%`;
+    cells+=`<div class="hcell ${lvl}" title="${esc(label)}"></div>`;
+  }
+  let streak=0;
+  for(let i=0;;i++){
+    const d=new Date(today); d.setDate(today.getDate()-i);
+    if((h[dateKey(d)]||0)>0) streak++; else break;
+  }
+  return {cells,streak};
+}
 function viewProgress(){
-  return `<div class="two">
+  const hm=heatmapData();
+  return `<section class="card glass"><h3>Consistency</h3>
+  <div class="streak"><div class="chip glass">${hm.streak} day${hm.streak===1?"":"s"} <span>streak</span></div></div>
+  <div class="heatmap-wrap"><div class="heatmap">${hm.cells}</div></div>
+  <div class="hlegend"><span>Less</span><span class="hcell l0"></span><span class="hcell l1"></span><span class="hcell l2"></span><span class="hcell l3"></span><span class="hcell l4"></span><span>More</span></div>
+  <p class="sub" style="margin:10px 0 0">Each square is a day's share of Daily done — run, skin and stretch combined.</p></section>
+  <div class="two">
   <section class="card glass"><h3>1500m</h3><div class="stat" id="b1500">—</div>
   <form id="f1500" style="display:flex;gap:8px"><input id="i1500" placeholder="5:12" inputmode="decimal" aria-label="1500m time"><button class="btn primary">Log</button></form>
   <p class="err" id="e1500"></p><ul class="entries" id="l1500"></ul></section>
@@ -185,6 +222,10 @@ function render(){
   v.querySelectorAll("[data-day]").forEach(x=>x.onclick=()=>{runDay=+x.dataset.day;render()});
   v.querySelectorAll("[data-m]").forEach(x=>x.onclick=()=>{mSel=x.dataset.m;store.set("mSel",mSel);render()});
   v.querySelectorAll("[data-s]").forEach(x=>x.onclick=()=>{sSel=x.dataset.s;render()});
+  v.querySelectorAll("[data-fav]").forEach(x=>x.onclick=()=>{
+    const i=+x.dataset.fav; let fav=store.get("favFits",[]);
+    fav=fav.includes(i)?fav.filter(n=>n!==i):fav.concat(i);
+    store.set("favFits",fav); render()});
   v.querySelectorAll("[data-go]").forEach(x=>x.onclick=()=>{sSel=x.dataset.go;tab="strength";render();scrollTo(0,0)});
   v.querySelectorAll(".check").forEach(x=>x.onclick=()=>{
     const id=x.dataset.id;
@@ -215,15 +256,20 @@ function render(){
   }
 }
 document.querySelectorAll(".dock button").forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render();scrollTo(0,0)});
-window.rerender=render;
+window.rerender=()=>{
+  const a=document.activeElement;
+  if(a&&(a.tagName==="INPUT")&&$("#view").contains(a))return;
+  render();
+};
 
 /* ---------- account + sync UI ---------- */
 const authSheet=$("#authSheet"), acctSheet=$("#acctSheet"), pill=$("#syncPill");
 let signUpMode=false, lastStatus="";
 
 function setPill(text,bad){
-  if(!text){pill.hidden=true;return}
-  pill.hidden=false; pill.textContent=text; pill.classList.toggle("bad",!!bad);
+  pill.textContent=text||"";
+  pill.classList.toggle("show",!!text);
+  pill.classList.toggle("bad",!!bad);
 }
 function showAuth(show){authSheet.hidden=!show; if(show) $("#authEmail").focus()}
 function paintAccount(){

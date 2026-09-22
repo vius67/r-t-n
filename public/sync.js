@@ -5,13 +5,13 @@
 (function () {
   "use strict";
 
-  var SYNC_KEYS = ["ticks", "skin", "stretch", "weekly", "flip", "lifts", "t1500", "pushups"];
+  var SYNC_KEYS = ["ticks", "skin", "stretch", "weekly", "flip", "lifts", "t1500", "pushups", "history", "favFits"];
   var LOG_KEYS = ["t1500", "pushups"];     // [{id,v,d}]
   var META_KEY = "_meta";                  // {key: epoch ms}
   var LOCAL_ONLY = "_localOnly";
   var TABLE = "app_state";
 
-  var mem = {}, meta = {}, sb = null, user = null, timer = null, pulling = false;
+  var mem = {}, meta = {}, sb = null, user = null, timer = null, pulling = false, pushing = false, pushAgain = false;
   var listeners = [];
 
   function raw(k, f) {
@@ -91,6 +91,16 @@
     return out;
   }
 
+  // Daily scores only ever get overwritten upward within a day, so the higher
+  // value from either device is always the more-complete one — never drop a day.
+  function mergeHistory(a, b) {
+    var out = {}, k;
+    a = a || {}; b = b || {};
+    for (k in a) out[k] = a[k];
+    for (k in b) out[k] = out[k] === undefined ? b[k] : Math.max(out[k], b[k]);
+    return out;
+  }
+
   function merge(localData, localMeta, remoteData, remoteMeta) {
     var data = {}, m = {};
     SYNC_KEYS.forEach(function (k) {
@@ -100,6 +110,8 @@
         if (lv !== undefined || rv !== undefined) data[k] = unionById(lv || [], rv || []);
       } else if (k === "lifts") {
         if (lv !== undefined || rv !== undefined) data[k] = mergeLifts(lv, rv);
+      } else if (k === "history") {
+        if (lv !== undefined || rv !== undefined) data[k] = mergeHistory(lv, rv);
       } else {
         var pick = rt > lt ? rv : lv;
         if (pick === undefined) pick = rv !== undefined ? rv : lv;
@@ -135,6 +147,8 @@
 
   function push() {
     if (!user || !sb) return;
+    if (pushing) { pushAgain = true; return; }
+    pushing = true;
     emit("saving");
     sb.from(TABLE).upsert({
       user_id: user.id,
@@ -142,7 +156,9 @@
       meta: meta,
       updated_at: new Date().toISOString()
     }).then(function (r) {
+      pushing = false;
       emit(r.error ? "error:" + r.error.message : "saved");
+      if (pushAgain) { pushAgain = false; push(); }
     });
   }
 
