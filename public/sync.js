@@ -162,6 +162,18 @@
     });
   }
 
+  // Sorts object keys before comparing so a value round-tripped through
+  // Postgres jsonb (which doesn't preserve key order) still compares equal.
+  function stableStringify(v) {
+    if (Array.isArray(v)) return "[" + v.map(stableStringify).join(",") + "]";
+    if (v && typeof v === "object") {
+      return "{" + Object.keys(v).sort().map(function (k) {
+        return JSON.stringify(k) + ":" + stableStringify(v[k]);
+      }).join(",") + "}";
+    }
+    return JSON.stringify(v);
+  }
+
   function pull(silent) {
     if (!user || !sb || pulling) return Promise.resolve();
     pulling = true;
@@ -171,10 +183,17 @@
       if (r.error) { emit("error:" + r.error.message); return; }
       var row = r.data || {};
       var merged = merge(Store.snapshot(), meta, row.data || {}, row.meta || {});
+      // Our own push() upserts trigger this same client's postgres_changes
+      // subscription, which calls pull() right back. Pushing unconditionally
+      // here re-triggers that subscription, forever: push -> notify -> pull ->
+      // push -> notify -> ... So only push again if the merge actually
+      // changed something the row doesn't already have.
+      var changed = stableStringify(merged.data) !== stableStringify(row.data || {}) ||
+        stableStringify(merged.meta) !== stableStringify(row.meta || {});
       Store.hydrate(merged.data, merged.meta);
       emit("synced");
       if (window.rerender) window.rerender();
-      push();
+      if (changed) push();
     }, function (e) { pulling = false; emit("error:" + e.message); });
   }
 
