@@ -134,7 +134,7 @@ function viewStrength(){
 function viewSkin(){
   const s=skinState(), w=store.get("weekly",{});
   const done=Object.values(s.t).filter(Boolean).length;
-  return `<div class="streak"><div class="chip glass">${s.streak||0} days <span>streak</span></div><div class="chip glass">${done}/${skinTotal()} <span>today</span></div></div>
+  return `<div class="streak"><div class="chip glass" data-chip="streak">${s.streak||0} days <span>streak</span></div><div class="chip glass" data-chip="today">${done}/${skinTotal()} <span>today</span></div></div>
   <div class="two">${Object.entries(SKIN).map(([k,g])=>`<section class="card glass"><h3>${g.name}</h3>
   <ul class="list">${g.i.map((n,j)=>rowHTML("s"+k+j,n,"",s.t[k+j])).join("")}</ul></section>`).join("")}</div>
   <section class="card glass"><h3>Weekly</h3><ul class="list">${WEEKLY.map((n,j)=>rowHTML("w"+j,n,"",w[j])).join("")}</ul>
@@ -151,7 +151,7 @@ function viewMoves(){
   const f=store.get("flip",{});
   return tabs+`<section class="card glass warn"><h3>Stay safe</h3><p class="sub" style="margin:0">Never try a flip on hard ground, when you're tired, or without a spotter until a coach clears you. Landing on your head or neck can cause serious injury, so learn Level 3 in a class.</p></section>`+
   FLIP.map((L,li)=>{const n=L.i.filter((_,j)=>f[li+"-"+j]).length;
-    return `<section class="card glass"><h3>${L.t} <span class="lvl-count">${n}/${L.i.length}</span></h3><p class="sub">${L.k}</p>
+    return `<section class="card glass"><h3>${L.t} <span class="lvl-count" data-lvl="${li}">${n}/${L.i.length}</span></h3><p class="sub">${L.k}</p>
     <ul class="list">${L.i.map((x,j)=>rowHTML("f"+li+"-"+j,x,"",f[li+"-"+j])).join("")}</ul></section>`}).join("");
 }
 const starSVG='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.6 6.1 20.7l1.3-6.6-4.9-4.6 6.6-.8z"/></svg>';
@@ -213,6 +213,21 @@ function wireLog(key,f,i,l,b,e,parse,fmt,better,msg){
   draw();
 }
 
+function patchAfterCheck(v,id){
+  header();
+  if(tab==="run") v.querySelectorAll("[data-day]").forEach(x=>x.classList.toggle("done",dayDone(+x.dataset.day)));
+  if(tab==="skin"){
+    const s=skinState(), done=Object.values(s.t).filter(Boolean).length;
+    const sc=v.querySelector('[data-chip="streak"]'), tc=v.querySelector('[data-chip="today"]');
+    if(sc) sc.innerHTML=`${s.streak||0} days <span>streak</span>`;
+    if(tc) tc.innerHTML=`${done}/${skinTotal()} <span>today</span>`;
+  }
+  if(tab==="moves"&&mSel==="flip"&&id[0]==="f"){
+    const li=+id.slice(1).split("-")[0], f=store.get("flip",{});
+    const el=v.querySelector(`[data-lvl="${li}"]`);
+    if(el) el.textContent=`${FLIP[li].i.filter((_,j)=>f[li+"-"+j]).length}/${FLIP[li].i.length}`;
+  }
+}
 function render(){
   store.set("tab",tab);
   document.querySelectorAll(".dock button").forEach(x=>x.setAttribute("aria-current",x.dataset.tab===tab));
@@ -229,17 +244,21 @@ function render(){
   v.querySelectorAll("[data-go]").forEach(x=>x.onclick=()=>{sSel=x.dataset.go;tab="strength";render();scrollTo(0,0)});
   v.querySelectorAll(".check").forEach(x=>x.onclick=()=>{
     const id=x.dataset.id;
-    if(id[0]==="r"){const k=id.slice(1);ticks[k]=!ticks[k];store.set("ticks",ticks)}
-    else if(id[0]==="s"){const s=skinState(),k=id.slice(1);s.t[k]=!s.t[k];
+    let on;
+    if(id[0]==="r"){const k=id.slice(1);ticks[k]=!ticks[k];on=ticks[k];store.set("ticks",ticks)}
+    else if(id[0]==="s"){const s=skinState(),k=id.slice(1);s.t[k]=!s.t[k];on=s.t[k];
       const all=Object.values(s.t).filter(Boolean).length===skinTotal();
       if(all&&s.last!==todayKey()){const y=new Date();y.setDate(y.getDate()-1);
         const yk=y.getFullYear()+"-"+(y.getMonth()+1)+"-"+y.getDate();
         s.streak=s.last===yk?(s.streak||0)+1:1;s.last=todayKey()}
       store.set("skin",s)}
-    else if(id[0]==="t"){const s=stretchState(),k=id.slice(1);s.t[k]=!s.t[k];store.set("stretch",s)}
-    else if(id[0]==="f"){const f=store.get("flip",{}),k=id.slice(1);f[k]=!f[k];store.set("flip",f)}
-    else{const w=store.get("weekly",{}),k=id.slice(1);w[k]=!w[k];store.set("weekly",w)}
-    render()});
+    else if(id[0]==="t"){const s=stretchState(),k=id.slice(1);s.t[k]=!s.t[k];on=s.t[k];store.set("stretch",s)}
+    else if(id[0]==="f"){const f=store.get("flip",{}),k=id.slice(1);f[k]=!f[k];on=f[k];store.set("flip",f)}
+    else{const w=store.get("weekly",{}),k=id.slice(1);w[k]=!w[k];on=w[k];store.set("weekly",w)}
+    x.setAttribute("aria-checked",String(on));
+    x.closest("li").classList.toggle("on",on);
+    patchAfterCheck(v,id);
+  });
   const rw=$("#resetWeek"); if(rw) rw.onclick=()=>{ticks={};store.set("ticks",ticks);render()};
   const rk=$("#resetWeekly"); if(rk) rk.onclick=()=>{store.set("weekly",{});render()};
   v.querySelectorAll("form[data-ex]").forEach(f=>f.onsubmit=ev=>{ev.preventDefault();
