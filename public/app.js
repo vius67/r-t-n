@@ -11,18 +11,24 @@ const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunda
 const STRENGTH={
  A:{name:"Strength X",ex:[
    {n:"Chest press",rx:"3 × 8–10",w:true},{n:"Lat pulldown",rx:"3 × 8–10",w:true},
-   {n:"Bulgarian split squat",rx:"3 × 8 each"},{n:"Single-leg calf raise",rx:"3 × 15 each"},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
+   {n:"Bulgarian split squat",rx:"3 × 8 each"},{n:"Single-leg calf raise",rx:"3 × 15 each"},
+   {n:"Seated overhead press",rx:"3 × 8–10",w:true},{n:"EZ-bar curl",rx:"3 × 10–12",w:true},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
  B:{name:"Strength Y",ex:[
    {n:"Push-ups",rx:"3 sets, 2 short of failure"},{n:"Lat pulldown",rx:"3 × 10",w:true},{n:"Pec deck",rx:"2 × 12",w:true},
-   {n:"Step-ups",rx:"3 × 10 each"},{n:"Single-leg glute bridge",rx:"3 × 12 each"},{n:"Side plank",rx:"2 × 30s each",unit:"s"}]}
+   {n:"Step-ups",rx:"3 × 10 each"},{n:"Single-leg glute bridge",rx:"3 × 12 each"},
+   {n:"Rope triceps pushdown",rx:"3 × 10–12",w:true},{n:"Side plank",rx:"2 × 30s each",unit:"s"}]},
+ C:{name:"Strength Z",ex:[
+   {n:"Incline dumbbell press",rx:"3 × 10–12",w:true},{n:"Seated cable row",rx:"3 × 10–12",w:true},
+   {n:"Lateral raise",rx:"3 × 12–15",w:true},{n:"Hammer curl",rx:"3 × 10–12",w:true},
+   {n:"Cable triceps pushdown",rx:"3 × 10–12",w:true},{n:"Hanging knee raise",rx:"3 × 12–15"}]}
 };
 const PLAN=[
- {t:"Easy run",k:"Relaxed aerobic base for both events. You should be able to talk the whole time.",i:[["Easy run","30–35 min"],["Relaxed strides","6 × 100m"]]},
+ {t:"Easy run",s:"C",k:"Relaxed aerobic base for both events. You should be able to talk the whole time.",i:[["Easy run","30–35 min"],["Relaxed strides","6 × 100m"],["Strength Z (log it in Strength)","~35 min"]]},
  {t:"Speed",k:"400m day. Full recovery between reps — this builds raw speed, not fitness, so don't run it tired.",i:[["Warm-up jog","10 min"],["Drills: A-skips, high knees, bounds","10 min"],["Flying 30m sprints, walk back to recover","6 reps"],["Standing or 3-point starts, all-out","4 × 30m"],["Cool-down jog","10 min"]]},
- {t:"Strength X",s:"A",k:"Power first: explosive lower-body work sharpens your 400m drive phase and your 1500m closing kick. Add reps first, then weight once every set reaches the top of the range.",i:[["Strength X (log it in Strength)","~40 min"],["Optional easy jog","20 min"]]},
+ {t:"Strength X",s:"A",pureStrength:true,k:"Power first: explosive lower-body work sharpens your 400m drive phase and your 1500m closing kick. Add reps first, then weight once every set reaches the top of the range.",i:[["Strength X (log it in Strength)","~45 min"],["Optional easy jog","20 min"]]},
  {t:"Tempo",k:"Aerobic threshold for the 1500m. Comfortably hard: a few words at a time, not full sentences.",i:[["Warm-up jog","10 min"],["Tempo run","15–20 min"],["Cool-down jog","10 min"]]},
  {t:"Race-pace intervals",k:"Hard day, both events. The short reps train 400m speed-endurance; the longer ones train 1500m race rhythm.",i:[["Warm-up jog","10 min"],["300m at goal 400m race pace, full recovery","4 reps"],["400m at goal 1500m pace, 90s jog between","4 reps"],["Cool-down jog","10 min"]]},
- {t:"Strength Y",s:"B",k:"Quality reps. Stop each push-up set 2 reps before you can't do more.",i:[["Strength Y (log it in Strength)","~40 min"]]},
+ {t:"Strength Y",s:"B",pureStrength:true,k:"Quality reps. Stop each push-up set 2 reps before you can't do more.",i:[["Strength Y (log it in Strength)","~45 min"]]},
  {t:"Long run",k:"The slowest run of the week. Aerobic base under the speed — time on your feet is the goal.",i:[["Long easy run","45–60 min"]]}
 ];
 const SKIN={
@@ -101,10 +107,10 @@ function viewDaily(){
   const d=(new Date().getDay()+6)%7, p=PLAN[d], sk=skinState(), st=stretchState();
   const block=(step,title,sub,rows,extra="")=>`<section class="card glass"><p class="step">${step}</p><h3>${title}</h3>${sub?`<p class="sub">${sub}</p>`:""}<ul class="list">${rows}</ul>${extra}</section>`;
   const runRows=p.i.map(([n,rx],j)=>rowHTML("r"+d+"-"+j,n,rx,ticks[d+"-"+j])).join("");
-  const isRun=!p.s;
+  const isRun=!p.pureStrength;
   let out=block("Morning","Skin","",SKIN.am.i.map((n,j)=>rowHTML("sam"+j,n,"",sk.t["am"+j])).join(""));
   if(isRun) out+=block("Before training","Warm-up",STRETCH.pre.sub,STRETCH.pre.i.map(([n,rx],j)=>rowHTML("tpre"+j,n,rx,st.t["pre"+j])).join(""));
-  out+=block("Training",p.t,p.k,runRows,p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Log ${p.t} sets</button></p>`:"");
+  out+=block("Training",p.t,p.k,runRows,p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Log ${STRENGTH[p.s].name} sets</button></p>`:"");
   out+=block("After training","Stretch",STRETCH.post.sub,STRETCH.post.i.map(([n,rx],j)=>rowHTML("tpost"+j,n,rx,st.t["post"+j])).join(""));
   out+=block("Night","Skin","",SKIN.pm.i.map((n,j)=>rowHTML("spm"+j,n,"",sk.t["pm"+j])).join(""));
   return out+`<p class="tip glass">Eat in a calorie surplus with protein at every meal — gaining size on top of this much running takes deliberate fuel, not leftovers. Aim for 8–9 hours of sleep tonight.</p>`;
@@ -115,7 +121,7 @@ function viewRun(){
   <section class="card glass"><h2>${p.t}</h2><p class="sub">${DAYS[runDay]}</p>
   <ul class="list">${p.i.map(([n,rx],j)=>rowHTML("r"+runDay+"-"+j,n,rx,ticks[runDay+"-"+j])).join("")}</ul>
   <p class="tip">${p.k}</p>
-  ${p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Open ${p.t}</button></p>`:""}</section>
+  ${p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Open ${STRENGTH[p.s].name}</button></p>`:""}</section>
   <p class="foot"><button class="btn" id="resetWeek">Start a new week</button></p>`;
 }
 function viewStrength(){
