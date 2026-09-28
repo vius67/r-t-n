@@ -5,7 +5,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const dateKey=d=>d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
 const todayKey=()=>dateKey(new Date());
 const nice=()=>new Date().toLocaleDateString("en-AU",{day:"numeric",month:"short"});
-const tickSVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#04121f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+const tickSVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
 const STRENGTH={
