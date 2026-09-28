@@ -79,15 +79,15 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .card h3{margin:0 0 4px;font-size:1.1rem}
 .sub{color:var(--muted);margin:2px 0 14px}
 .list{list-style:none;margin:0;padding:0}
-.row{display:flex;align-items:center;gap:14px;padding:12px 4px;border-top:1px solid var(--hair)}
+.row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-top:1px solid var(--hair);font-size:.94rem}
 .row:first-child{border-top:0}
-.check{width:28px;height:28px;border-radius:50%;flex:none;border:1.5px solid var(--edge);display:grid;place-items:center;transition:background .2s}
+.check{width:26px;height:26px;border-radius:50%;flex:none;border:1.5px solid var(--edge);display:grid;place-items:center;transition:background .2s}
 .check svg{opacity:0;transition:opacity .2s;color:var(--base)}
 .row.on .check{background:var(--accent);border-color:transparent}
 .row.on .check svg{opacity:1}
 .row .name{flex:1}
 .row.on .name{color:var(--muted)}
-.rx{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rx{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:.85rem}
 .tip{margin:14px 0 0;padding:12px 16px;border-radius:18px;background:var(--glass);color:var(--muted);font-size:.95rem}
 .ex{padding:14px 4px;border-top:1px solid var(--hair)}
 .ex:first-child{border-top:0}
@@ -147,8 +147,8 @@ input::placeholder{color:var(--muted)}
   .card{padding:28px}
   .card h2{font-size:1.75rem}
   .card h3{font-size:1.3rem}
-  .row{padding:15px 4px;gap:16px}
-  .check{width:32px;height:32px}
+  .row{padding:14px 4px;gap:14px;font-size:.85rem}
+  .check{width:28px;height:28px}
   .ring{width:86px;height:86px}
   .top h1{font-size:clamp(2rem,2.6vw,2.6rem)}
   .stat{font-size:3rem}
