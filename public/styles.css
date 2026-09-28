@@ -47,6 +47,33 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .pill{padding:9px 16px;border-radius:999px;font-weight:600;white-space:nowrap;color:var(--muted);flex:1;position:relative}
 .pill[aria-pressed="true"]{background:var(--glass-hi);color:var(--ink)}
 .pill.done::after{content:"";position:absolute;top:6px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--good)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.tile{padding:18px 20px;border-radius:20px}
+.tile-n{font-size:2rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  text-shadow:0 8px 20px var(--num-shadow)}
+.tile-l{margin-top:2px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dashrow{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-bottom:12px}
+@media (max-width:760px){.dashrow{grid-template-columns:1fr}}
+.hero{background:var(--ink);color:var(--base);border-radius:28px;padding:26px 26px 24px;
+  min-height:210px;display:flex;flex-direction:column;box-shadow:var(--card-shadow)}
+.hero .step{color:rgba(244,245,249,.5)}
+.hero h2{margin:2px 0 0;font-size:1.7rem;font-weight:800;letter-spacing:-.02em}
+.hero-note{margin:10px 0 0;color:rgba(244,245,249,.68);font-style:italic}
+.hero-btn{margin-top:auto;align-self:flex-start;background:rgba(244,245,249,.14);color:var(--base);
+  border:1px solid rgba(244,245,249,.22);font-weight:600}
+.hero-btn:hover{background:rgba(244,245,249,.22)}
+.schedule h3{margin:0 0 14px}
+.sched-list{list-style:none;margin:0;padding:0}
+.sched-row{display:flex;align-items:center;gap:12px;padding:9px 4px 9px 12px;
+  border-left:3px solid transparent;border-radius:8px}
+.sched-row .name{flex:1;font-weight:600}
+.sched-row .cnt{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+.sched-row.c0{border-left-color:#4fae6e}
+.sched-row.c1{border-left-color:#3fa8b8}
+.sched-row.c2{border-left-color:#d97552}
+.sched-row.c3{border-left-color:#5f82d9}
+.sched-row.done .name{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--hair)}
 .card{padding:22px;margin-bottom:16px}
 .card h2{margin:0;font-size:1.5rem;letter-spacing:-.01em}
 .card h3{margin:0 0 4px;font-size:1.1rem}
@@ -83,6 +110,7 @@ input::placeholder{color:var(--muted)}
 .chip span{color:var(--muted);font-weight:500}
 .dock{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);
   display:flex;gap:4px;padding:6px;border-radius:999px;z-index:5}
+.dockhead{display:none}
 .dock button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 16px;border-radius:999px;color:var(--muted);font-size:.72rem;font-weight:600}
 .dock button[aria-current="true"]{background:var(--glass-hi);color:var(--ink)}
 .dock svg{width:22px;height:22px}
@@ -102,9 +130,20 @@ input::placeholder{color:var(--muted)}
   body{padding-bottom:40px;font-size:20px}
   main{max-width:960px;padding-top:max(32px,env(safe-area-inset-top))}
   .dock{left:28px;top:50%;bottom:auto;transform:translateY(-50%);
-    flex-direction:column;gap:4px;padding:14px 8px;border-radius:26px;width:96px}
-  .dock button{flex-direction:column;padding:14px 6px;font-size:.75rem;gap:5px}
-  .dock svg{width:24px;height:24px}
+    flex-direction:column;align-items:stretch;gap:2px;padding:14px 10px;
+    border-radius:999px;width:64px;overflow:hidden;
+    transition:width .35s cubic-bezier(.2,.8,.2,1),border-radius .35s cubic-bezier(.2,.8,.2,1)}
+  .dock:hover,.dock:focus-within{width:200px;border-radius:26px}
+  .dockhead{display:flex;align-items:center;gap:10px;padding:4px 6px 14px;color:var(--muted)}
+  .dockhead .grip{flex:none;opacity:.45}
+  .dockhead .brand{font-weight:800;font-size:1.05rem;color:var(--ink);white-space:nowrap;
+    opacity:0;transition:opacity .2s}
+  .dock:hover .dockhead .brand,.dock:focus-within .dockhead .brand{opacity:1;transition-delay:.1s}
+  .dock button{flex-direction:row;justify-content:flex-start;padding:11px 11px;
+    font-size:.85rem;gap:14px;border-radius:14px;white-space:nowrap;overflow:hidden}
+  .dock button .lbl{opacity:0;transition:opacity .2s}
+  .dock:hover button .lbl,.dock:focus-within button .lbl{opacity:1;transition-delay:.1s}
+  .dock svg{width:22px;height:22px;flex:none}
   .card{padding:28px}
   .card h2{font-size:1.75rem}
   .card h3{font-size:1.3rem}
