@@ -110,11 +110,9 @@ function viewDaily(){
   const isRun=!p.pureStrength;
 
   const runDoneN=p.i.filter((_,j)=>ticks[d+"-"+j]).length;
-  const skinDoneAll=Object.values(sk.t).filter(Boolean).length;
   const stDoneAll=Object.values(st.t).filter(Boolean).length;
   const tiles=`<div class="tiles">
     <div class="tile glass"><div class="tile-n">${p.i.length-runDoneN}</div><div class="tile-l">${p.pureStrength?"lifts left":"run left"}</div></div>
-    <div class="tile glass"><div class="tile-n">${skinTotal()-skinDoneAll}</div><div class="tile-l">skin left</div></div>
     <div class="tile glass"><div class="tile-n">${stretchTotal()-stDoneAll}</div><div class="tile-l">stretch left</div></div>
   </div>`;
 
@@ -123,20 +121,12 @@ function viewDaily(){
     <h2>${esc(p.t)}</h2><p class="hero-note">${esc(heroNote)}</p>
     ${p.s?`<button class="btn hero-btn" data-go="${p.s}">+ Log ${esc(STRENGTH[p.s].name)}</button>`:""}</section>`;
 
-  const amDone=SKIN.am.i.filter((_,j)=>sk.t["am"+j]).length, amTotal=SKIN.am.i.length;
-  const pmDone=SKIN.pm.i.filter((_,j)=>sk.t["pm"+j]).length, pmTotal=SKIN.pm.i.length;
-  const preDone=STRETCH.pre.i.filter((_,j)=>st.t["pre"+j]).length, preTotal=STRETCH.pre.i.length;
-  const postDone=STRETCH.post.i.filter((_,j)=>st.t["post"+j]).length, postTotal=STRETCH.post.i.length;
-  const phases=[["Morning skin",amDone,amTotal,0]];
-  if(isRun) phases.push(["Warm-up",preDone,preTotal,1]);
-  phases.push([p.t,runDoneN,p.i.length,2]);
-  phases.push(["Stretch",postDone,postTotal,1]);
-  phases.push(["Night skin",pmDone,pmTotal,3]);
-  const schedule=`<section class="card glass schedule"><h3>Today's flow</h3><ul class="sched-list">${
-    phases.map(([name,dn,tt,ci])=>`<li class="sched-row c${ci}${tt>0&&dn>=tt?" done":""}"><span class="name">${esc(name)}</span><span class="cnt">${dn}/${tt}</span></li>`).join("")
-  }</ul></section>`;
+  const daysDone=PLAN.filter((_,i)=>dayDone(i)).length;
+  const week=`<section class="card glass weekcard"><h3>This week</h3>
+    <div class="weekrow">${PLAN.map((_,i)=>`<span class="wk${i===d?" today":""}${dayDone(i)?" done":""}">${DAYS[i][0]}</span>`).join("")}</div>
+    <p class="sub" style="margin:12px 0 0">${daysDone}/7 days complete</p></section>`;
 
-  let out=tiles+`<div class="dashrow">${hero}${schedule}</div>`;
+  let out=tiles+`<div class="dashrow">${hero}${week}</div>`;
   out+=block("Morning","Skin","",SKIN.am.i.map((n,j)=>rowHTML("sam"+j,n,"",sk.t["am"+j])).join(""));
   if(isRun) out+=block("Before training","Warm-up",STRETCH.pre.sub,STRETCH.pre.i.map(([n,rx],j)=>rowHTML("tpre"+j,n,rx,st.t["pre"+j])).join(""));
   out+=block("Training",p.t,p.k,runRows,p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Log ${STRENGTH[p.s].name} sets</button></p>`:"");
