@@ -1,35 +1,20 @@
 :root{
-  --bg1:#1c2740; --bg2:#2a1f3d; --bg3:#123230; --base:#0a0b0f;
-  --glass:rgba(255,255,255,.06); --glass-hi:rgba(255,255,255,.11);
-  --edge:rgba(255,255,255,.14); --hair:rgba(255,255,255,.12);
-  --ink:#f5f6f8; --muted:rgba(245,246,248,.56);
-  --accent:#f5f6f8; --good:#5fd897; --warn:#ff8080;
-  --card-shadow:0 1px 0 rgba(255,255,255,.04),0 24px 48px rgba(0,0,0,.5);
-  --num-shadow:rgba(0,0,0,.55); --dot:rgba(255,255,255,.05);
-}
-:root[data-theme="light"]{
   --bg1:#cfe0ff; --bg2:#e9d6ff; --bg3:#cdf3ea; --base:#f4f5f9;
   --glass:rgba(255,255,255,.72); --glass-hi:rgba(255,255,255,.92);
   --edge:rgba(10,12,20,.1); --hair:rgba(10,12,20,.08);
   --ink:#0b0d12; --muted:rgba(11,13,18,.52);
   --accent:#111318; --good:#1f9d5c; --warn:#d6453f;
   --card-shadow:0 1px 2px rgba(10,12,20,.04),0 24px 48px rgba(10,12,20,.07);
-  --num-shadow:rgba(10,12,20,.16); --dot:rgba(10,12,20,.05);
-}
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --bg1:#cfe0ff; --bg2:#e9d6ff; --bg3:#cdf3ea; --base:#f4f5f9;
-    --glass:rgba(255,255,255,.72); --glass-hi:rgba(255,255,255,.92);
-    --edge:rgba(10,12,20,.1); --hair:rgba(10,12,20,.08);
-    --ink:#0b0d12; --muted:rgba(11,13,18,.52);
-    --accent:#111318; --good:#1f9d5c; --warn:#d6453f;
-    --card-shadow:0 1px 2px rgba(10,12,20,.04),0 24px 48px rgba(10,12,20,.07);
-    --num-shadow:rgba(10,12,20,.16); --dot:rgba(10,12,20,.05);
-  }
+  --num-shadow:rgba(10,12,20,.16); --dot:rgba(10,12,20,.16);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;overflow-x:hidden}
-body{background:radial-gradient(var(--dot) 1.4px,transparent 1.6px) 0 0/46px 46px,var(--base);color:var(--ink);
+body{background:
+    radial-gradient(var(--dot) 1.6px,transparent 1.8px) 6px 4px/38px 38px,
+    radial-gradient(var(--dot) 1.1px,transparent 1.3px) 24px 22px/57px 57px,
+    radial-gradient(var(--dot) 1.3px,transparent 1.5px) 40px 10px/71px 71px,
+    var(--base);
+  color:var(--ink);
   font:18px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   padding-bottom:120px;overflow-x:hidden}
 .ambient{position:fixed;inset:-20vmax;z-index:-1;filter:blur(90px);opacity:.55}
