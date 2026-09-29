@@ -1,8 +1,8 @@
 /* Cache the app shell so it opens instantly and works with no signal.
    Bump CACHE when you change any file below. */
-const CACHE = "rtn-v13";
+const CACHE = "rtn-v14";
 const SHELL = [
-  "./", "./index.html", "./styles.css", "./config.js", "./sync.js", "./app.js",
+  "./", "./index.html", "./styles.css", "./config.js", "./sync.js", "./app.js", "./cursor.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"
