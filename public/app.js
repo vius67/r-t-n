@@ -32,8 +32,8 @@ const PLAN=[
  {t:"Long run",k:"The slowest run of the week. Aerobic base under the speed — time on your feet is the goal.",i:[["Long easy run","45–60 min"]]}
 ];
 const SKIN={
- am:{name:"Morning",i:["Rinse or gentle cleanser","Light moisturiser","Sunscreen SPF 50+","Lip balm"]},
- pm:{name:"Night",i:["Gentle cleanser (after training too)","Light moisturiser","Lip balm","Hands off face, no picking"]}
+ am:{name:"Morning",i:["Rinse or gentle cleanser","Apply serum","Light moisturiser"]},
+ pm:{name:"Night",i:["Gentle cleanser (after training too)","Exfoliate","Apply serum","Light moisturiser","Hands off face, no picking"]}
 };
 const STRETCH={
  pre:{name:"Before runs",sub:"Dynamic warm-up, about 5 min. Keep moving, no holding.",i:[
@@ -165,7 +165,7 @@ function viewSkin(){
   <section class="card glass"><h3>Weekly</h3><ul class="list">${WEEKLY.map((n,j)=>rowHTML("w"+j,n,"",w[j])).join("")}</ul>
   <p class="foot"><button class="btn" id="resetWeekly">Clear weekly list</button></p></section>
   <section class="card glass"><h3>Keep in mind</h3>
-  <p class="sub" style="margin:0">Haircut and shape-up every 4–6 weeks. Drink water through the day. Shower soon after training. Give any new product 6–8 weeks before judging it, and see a GP if breakouts get painful or leave marks.</p></section>`;
+  <p class="sub" style="margin:0">Haircut and shape-up every 4–6 weeks. Drink water through the day. Shower soon after training. Only exfoliate 2–3 times a week, not every night — daily exfoliation strips and irritates skin. Give any new product 6–8 weeks before judging it, and see a GP if breakouts get painful or leave marks.</p></section>`;
 }
 function viewMoves(){
   const tabs=`<div class="pills glass" role="group" aria-label="Moves">${[["stretch","Stretching"],["flip","Backflip"]].map(([k,n])=>`<button class="pill" aria-pressed="${k===mSel}" data-m="${k}">${n}</button>`).join("")}</div>`;
