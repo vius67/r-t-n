@@ -12,7 +12,7 @@ const STRENGTH={
  A:{name:"Strength X",ex:[
    {n:"Chest press",rx:"3 × 8–10",w:true},{n:"Lat pulldown",rx:"3 × 8–10",w:true},
    {n:"Bulgarian split squat",rx:"3 × 8 each"},{n:"Single-leg calf raise",rx:"3 × 15 each"},
-   {n:"Seated overhead press",rx:"3 × 8–10",w:true},{n:"EZ-bar curl",rx:"3 × 10–12",w:true},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
+   {n:"Seated overhead press",rx:"3 × 8–10",w:true},{n:"Dumbbell curl",rx:"3 × 10–12",w:true},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
  B:{name:"Strength Y",ex:[
    {n:"Push-ups",rx:"3 sets, 2 short of failure"},{n:"Lat pulldown",rx:"3 × 10",w:true},{n:"Pec deck",rx:"2 × 12",w:true},
    {n:"Step-ups",rx:"3 × 10 each"},{n:"Single-leg glute bridge",rx:"3 × 12 each"},
