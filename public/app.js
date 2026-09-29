@@ -299,7 +299,7 @@ function render(){
       s=>{const n=parseInt(s,10);return n>0&&n<=200?n:null},v=>v+" reps",(a,b)=>a>b,"Enter a whole number.");
   }
 }
-document.querySelectorAll(".dock button").forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render();scrollTo(0,0)});
+document.querySelectorAll(".dock button").forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render();scrollTo(0,0);x.blur()});
 window.rerender=()=>{
   const a=document.activeElement;
   if(a&&(a.tagName==="INPUT")&&$("#view").contains(a))return;
