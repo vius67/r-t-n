@@ -143,14 +143,29 @@ function viewRun(){
   ${p.s?`<p class="foot"><button class="btn primary" data-go="${p.s}">Open ${STRENGTH[p.s].name}</button></p>`:""}</section>
   <p class="foot"><button class="btn" id="resetWeek">Start a new week</button></p>`;
 }
+const MS_TIERS=[[1,"Day 1"],[1.1,"Bronze"],[1.25,"Silver"],[1.5,"Gold"],[2,"Platinum"]];
+function milestone(L,key){
+  if(!L.length) return null;
+  const base=L[0][key];
+  if(!base) return null;
+  const best=L.reduce((m,c)=>c[key]>m?c[key]:m,base);
+  let idx=0;
+  for(let i=0;i<MS_TIERS.length;i++) if(best>=base*MS_TIERS[i][0]) idx=i;
+  const cur=MS_TIERS[idx], next=MS_TIERS[idx+1];
+  const pct=next?Math.max(0,Math.min(1,(best-base*cur[0])/(base*(next[0]-cur[0])))):1;
+  return {tier:cur[1],next:next?next[1]:null,pct};
+}
 function viewStrength(){
   const s=STRENGTH[sSel], logs=store.get("lifts",{});
   return `<div class="pills glass" role="group" aria-label="Workout">${Object.keys(STRENGTH).map(k=>`<button class="pill" aria-pressed="${k===sSel}" data-s="${k}">${STRENGTH[k].name}</button>`).join("")}</div>
   <section class="card glass"><h2>${s.name}</h2><p class="sub">Log your best set of each. Beat it next time.</p>
   ${s.ex.map((e,i)=>{const L=logs[e.n]||[], last=L[L.length-1];
     const lastTxt=last?`Last: ${last.w?last.w+" kg × ":""}${last.r}${e.unit||" reps"} · ${last.d}`:"No sets logged yet";
+    const m=milestone(L,e.w?"w":"r");
+    const msHTML=m?`<div class="ms"><div class="ms-bar"><span style="width:${Math.round(m.pct*100)}%"></span></div>
+      <div class="ms-lbl">${esc(m.tier)}${m.next?` → ${esc(m.next)}`:" · maxed out"}</div></div>`:"";
     return `<div class="ex"><div class="ex-head"><b>${e.n}</b><span class="rx">${e.rx}</span></div>
-    <div class="ex-last">${lastTxt}</div>
+    <div class="ex-last">${lastTxt}</div>${msHTML}
     <form data-ex="${i}">${e.w?`<input name="w" type="number" step="0.5" min="0" max="300" placeholder="kg" aria-label="${e.n} weight in kg">`:""}
     <input name="r" type="number" min="1" max="300" placeholder="${e.unit?"seconds":"reps"}" aria-label="${e.n} ${e.unit?"seconds":"reps"}">
     <button class="btn">Log</button></form><p class="err"></p></div>`}).join("")}
