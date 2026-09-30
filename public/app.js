@@ -308,7 +308,7 @@ window.rerender=()=>{
 
 /* ---------- account + sync UI ---------- */
 const authSheet=$("#authSheet"), acctSheet=$("#acctSheet"), pill=$("#syncPill");
-let signUpMode=false, lastStatus="";
+let signUpMode=false;
 
 function setPill(text,bad){
   pill.textContent=text||"";
@@ -365,7 +365,7 @@ $("#authForm").onsubmit=e=>{
 };
 
 window.Store.onChange(status=>{
-  lastStatus=status; paintAccount();
+  paintAccount();
   if(status==="unconfigured"){setPill("Add your Supabase keys in config.js to sync");return}
   if(status==="no-lib"){setPill("Couldn't load Supabase — you're offline, saving locally");return}
   if(status.startsWith("error:")){setPill(status.slice(6),true);return}
@@ -375,9 +375,6 @@ window.Store.onChange(status=>{
     return;
   }
   if(status==="signed-in"||status==="synced"){showAuth(false);setPill("");render()}
-  if(status==="syncing")setPill("Syncing…");
-  if(status==="saving")setPill("Saving…");
-  if(status==="saved"){setPill("Saved");setTimeout(()=>{if(lastStatus==="saved")setPill("")},1200)}
 });
 
 render();

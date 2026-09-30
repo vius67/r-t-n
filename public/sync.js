@@ -145,6 +145,15 @@
     timer = setTimeout(push, 1000);
   }
 
+  // A tab going to the background (app switch, phone lock, closing the tab)
+  // can suspend before the debounce timer above ever fires, silently
+  // dropping the last change - it's still safe in localStorage on this
+  // device, but never reaches Supabase. Flush any pending push immediately
+  // the moment we might be about to lose the chance to run it.
+  function flushPush() {
+    if (timer) { clearTimeout(timer); timer = null; push(); }
+  }
+
   function push() {
     if (!user || !sb) return;
     if (pushing) { pushAgain = true; return; }
@@ -238,8 +247,10 @@
     });
     c.auth.onAuthStateChange(function (_e, session) { setUser(session ? session.user : null); });
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden && user) pull(true);
+      if (document.hidden) flushPush();
+      else if (user) pull(true);
     });
+    window.addEventListener("pagehide", flushPush);
     window.addEventListener("online", function () { if (user) pull(true); });
   };
 
