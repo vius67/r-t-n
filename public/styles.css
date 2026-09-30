@@ -97,6 +97,8 @@ html.comet-on,html.comet-on *{cursor:none}
 .ms-bar{height:6px;border-radius:999px;background:var(--glass-hi);overflow:hidden;border:1px solid var(--edge)}
 .ms-bar span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease}
 .ms-lbl{margin-top:5px;font-size:.7rem;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bump{margin:8px 0 0;padding:8px 12px;border-radius:12px;background:var(--accent);color:var(--base);
+  font-size:.82rem;font-weight:600}
 .ex form{display:flex;gap:8px;margin-top:10px}
 input{min-width:0;flex:1;padding:10px 14px;border-radius:999px;border:1px solid var(--edge);background:var(--glass);color:var(--ink);font:inherit}
 input::placeholder{color:var(--muted)}

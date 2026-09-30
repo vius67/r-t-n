@@ -10,17 +10,17 @@ const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunda
 
 const STRENGTH={
  A:{name:"Strength X",ex:[
-   {n:"Chest press",rx:"3 × 8–10",w:true},{n:"Lat pulldown",rx:"3 × 8–10",w:true},
-   {n:"Bulgarian split squat",rx:"3 × 8 each"},{n:"Single-leg calf raise",rx:"3 × 15 each"},
-   {n:"Seated overhead press",rx:"3 × 8–10",w:true},{n:"Dumbbell curl",rx:"3 × 10–12",w:true},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
+   {n:"Chest press",rx:"3 × 8–10",w:true,top:10},{n:"Lat pulldown",rx:"3 × 8–10",w:true,top:10},
+   {n:"Bulgarian split squat",rx:"3 × 8 each",top:8},{n:"Single-leg calf raise",rx:"3 × 15 each",top:15},
+   {n:"Seated overhead press",rx:"3 × 8–10",w:true,top:10},{n:"Dumbbell curl",rx:"3 × 10–12",w:true,top:12},{n:"Plank",rx:"3 × 40s",unit:"s"}]},
  B:{name:"Strength Y",ex:[
-   {n:"Push-ups",rx:"3 sets, 2 short of failure"},{n:"Lat pulldown",rx:"3 × 10",w:true},{n:"Pec deck",rx:"2 × 12",w:true},
-   {n:"Step-ups",rx:"3 × 10 each"},{n:"Single-leg glute bridge",rx:"3 × 12 each"},
-   {n:"Rope triceps pushdown",rx:"3 × 10–12",w:true},{n:"Side plank",rx:"2 × 30s each",unit:"s"}]},
+   {n:"Push-ups",rx:"3 sets, 2 short of failure"},{n:"Lat pulldown",rx:"3 × 10",w:true,top:10},{n:"Pec deck",rx:"2 × 12",w:true,top:12},
+   {n:"Step-ups",rx:"3 × 10 each",top:10},{n:"Single-leg glute bridge",rx:"3 × 12 each",top:12},
+   {n:"Rope triceps pushdown",rx:"3 × 10–12",w:true,top:12},{n:"Side plank",rx:"2 × 30s each",unit:"s"}]},
  C:{name:"Strength Z",ex:[
-   {n:"Incline dumbbell press",rx:"3 × 10–12",w:true},{n:"Seated cable row",rx:"3 × 10–12",w:true},
-   {n:"Lateral raise",rx:"3 × 12–15",w:true},{n:"Hammer curl",rx:"3 × 10–12",w:true},
-   {n:"Cable triceps pushdown",rx:"3 × 10–12",w:true},{n:"Hanging knee raise",rx:"3 × 12–15"}]}
+   {n:"Incline dumbbell press",rx:"3 × 10–12",w:true,top:12},{n:"Seated cable row",rx:"3 × 10–12",w:true,top:12},
+   {n:"Lateral raise",rx:"3 × 12–15",w:true,top:15},{n:"Hammer curl",rx:"3 × 10–12",w:true,top:12},
+   {n:"Cable triceps pushdown",rx:"3 × 10–12",w:true,top:12},{n:"Hanging knee raise",rx:"3 × 12–15",top:15}]}
 };
 const PLAN=[
  {t:"Easy run",s:"C",k:"Relaxed aerobic base for both events. You should be able to talk the whole time.",i:[["Easy run","30–35 min"],["Relaxed strides","6 × 100m"],["Strength Z (log it in Strength)","~35 min"]]},
@@ -164,8 +164,10 @@ function viewStrength(){
     const m=milestone(L,e.w?"w":"r");
     const msHTML=m?`<div class="ms"><div class="ms-bar"><span style="width:${Math.round(m.pct*100)}%"></span></div>
       <div class="ms-lbl">${esc(m.tier)}${m.next?` → ${esc(m.next)}`:" · maxed out"}</div></div>`:"";
+    const bump=e.top&&last&&last.r>=e.top;
+    const bumpHTML=bump?`<p class="bump">Topped the range last time — ${e.w?"add weight":"add load or make it harder"} next session.</p>`:"";
     return `<div class="ex"><div class="ex-head"><b>${e.n}</b><span class="rx">${e.rx}</span></div>
-    <div class="ex-last">${lastTxt}</div>${msHTML}
+    <div class="ex-last">${lastTxt}</div>${msHTML}${bumpHTML}
     <form data-ex="${i}">${e.w?`<input name="w" type="number" step="0.5" min="0" max="300" placeholder="kg" aria-label="${e.n} weight in kg">`:""}
     <input name="r" type="number" min="1" max="300" placeholder="${e.unit?"seconds":"reps"}" aria-label="${e.n} ${e.unit?"seconds":"reps"}">
     <button class="btn">Log</button></form><p class="err"></p></div>`}).join("")}
